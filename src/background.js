@@ -115,13 +115,12 @@ async function simplifyText(text, readingLevel, apiKey, endpoint) {
 
 Your task: Rewrite this text to be CRYSTAL CLEAR for someone at a ${readingLevel}th grade reading level.
 
-CRITICAL RULES:
-1. Replace ALL difficult words with simple everyday words
-2. Break EVERY long sentence into 2-3 short sentences (10-15 words max)
-3. Use active voice ("The cat ate" not "was eaten by")
-4. Remove jargon, technical terms, and complex phrases
-5. Explain any necessary terms in simple language
-6. Make it conversational and friendly
+CRITICAL RULES FOR SIMPLIFIED VERSION:
+1. Make it EXTREMELY SHORT - 1-3 sentences max (aim for 20-40 words total)
+2. Capture ONLY the main idea - skip all details
+3. Use the simplest possible words (like talking to a friend)
+4. Keep sentences under 12 words each
+5. Get straight to the point - no fluff
 
 For the summary:
 - Extract ONLY 3-4 key points (keep it short!)
@@ -136,7 +135,7 @@ For action steps:
 
 Return VALID JSON only (no markdown, no code blocks):
 {
-  "simplified": "Your simplified version. Keep paragraphs short. Use \\n\\n for paragraph breaks.",
+  "simplified": "Super brief version in 1-3 short sentences. Main idea only.",
   "keySentences": ["Short key point 1", "Short key point 2", "Short key point 3"],
   "bullets": ["Brief action 1", "Brief action 2"]
 }
