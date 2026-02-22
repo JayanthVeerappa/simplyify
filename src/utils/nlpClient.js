@@ -6,31 +6,47 @@
  */
 async function simplifyText(text, readingLevel = '8') {
   return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage(
-      {
-        type: 'NLP_REQUEST',
-        action: 'simplify',
-        payload: { text, readingLevel }
-      },
-      response => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
-          return;
-        }
-        
-        if (response.error) {
-          if (response.fallback) {
-            // API failed, use fallback
-            resolve(createFallbackSimplification(text));
-          } else {
-            reject(new Error(response.error));
+    try {
+      chrome.runtime.sendMessage(
+        {
+          type: 'NLP_REQUEST',
+          action: 'simplify',
+          payload: { text, readingLevel }
+        },
+        response => {
+          if (chrome.runtime.lastError) {
+            const error = chrome.runtime.lastError.message;
+            // Provide user-friendly error messages
+            if (error.includes('Extension context invalidated')) {
+              reject(new Error('Extension context invalidated'));
+            } else {
+              reject(new Error(error));
+            }
+            return;
           }
-          return;
+          
+          if (!response) {
+            reject(new Error('No response from background script'));
+            return;
+          }
+          
+          if (response.error) {
+            if (response.fallback) {
+              // API failed, use fallback
+              resolve(createFallbackSimplification(text));
+            } else {
+              // Pass through API errors (like quota exceeded)
+              reject(new Error(response.error));
+            }
+            return;
+          }
+          
+          resolve(response);
         }
-        
-        resolve(response);
-      }
-    );
+      );
+    } catch (e) {
+      reject(new Error('Failed to send message: ' + e.message));
+    }
   });
 }
 
@@ -39,27 +55,39 @@ async function simplifyText(text, readingLevel = '8') {
  */
 async function detectTone(text) {
   return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage(
-      {
-        type: 'NLP_REQUEST',
-        action: 'tone',
-        payload: { text }
-      },
-      response => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
-          return;
+    try {
+      chrome.runtime.sendMessage(
+        {
+          type: 'NLP_REQUEST',
+          action: 'tone',
+          payload: { text }
+        },
+        response => {
+          if (chrome.runtime.lastError) {
+            const error = chrome.runtime.lastError.message;
+            if (error.includes('Extension context invalidated')) {
+              // Return neutral tone instead of failing completely
+              resolve({ tone: 'neutral', confidence: 0.5, explanation: 'Extension reloaded' });
+            } else {
+              // Return neutral tone on error
+              resolve({ tone: 'neutral', confidence: 0.5, explanation: 'Unable to detect' });
+            }
+            return;
+          }
+          
+          if (!response || response.error) {
+            // Return neutral tone on error
+            resolve({ tone: 'neutral', confidence: 0.5, explanation: 'Unable to detect' });
+            return;
+          }
+          
+          resolve(response);
         }
-        
-        if (response.error) {
-          // Return neutral tone on error
-          resolve({ tone: 'neutral', confidence: 0.5, explanation: 'Unable to detect' });
-          return;
-        }
-        
-        resolve(response);
-      }
-    );
+      );
+    } catch (e) {
+      // Return neutral tone on exception
+      resolve({ tone: 'neutral', confidence: 0.5, explanation: 'Error: ' + e.message });
+    }
   });
 }
 

@@ -111,23 +111,36 @@
       if (state.settings.autoSimplify !== false && analysis.totalWords > 200 && window.CogAssist_NLP) {
         // Check if API key is configured
         if (!state.settings.apiKey || state.settings.apiKey.trim() === '') {
-          console.warn('⚠️ No API key configured');
+          console.warn('⚠️ No API key configured - showing setup prompt');
           apiKeyMissing = true;
         } else {
           try {
-            console.log('📝 Requesting AI summary for', analysis.totalWords, 'words...');
+            console.log('📝 Requesting AI summary for', analysis.totalWords, 'words with API key:', state.settings.apiKey.slice(0, 10) + '...');
             summary = await window.CogAssist_NLP.simplifyText(analysis.fullText, state.settings.readingLevel || '8');
             console.log('✅ Summary received:', summary);
           } catch (e) {
+            const errorMsg = e.message || String(e);
             console.error('❌ AI summary failed:', e);
-            showNotification('⚠️ Could not generate summary - check API key');
+            
+            // Handle specific error types
+            if (errorMsg.includes('Extension context invalidated')) {
+              showNotification('⚠️ Extension reloaded - please refresh the page');
+              return; // Stop processing entirely
+            } else if (errorMsg.includes('429') || errorMsg.includes('quota') || errorMsg.includes('RESOURCE_EXHAUSTED')) {
+              showNotification('⚠️ API quota exceeded (20/day limit)');
+              apiKeyMissing = false; // Don't show API key prompt for quota errors
+            } else {
+              showNotification('⚠️ Could not generate summary - check API key');
+              apiKeyMissing = true;
+            }
           }
         }
       } else {
         console.log('⏭️ Skipping AI summary:', { 
           autoSimplify: state.settings.autoSimplify, 
           wordCount: analysis.totalWords,
-          hasNLP: !!window.CogAssist_NLP 
+          hasNLP: !!window.CogAssist_NLP,
+          hasApiKey: !!state.settings.apiKey 
         });
       }
 
@@ -276,7 +289,7 @@
         ${apiKeyMissing ? `
           <div class="cog-section">
             <h4>📝 Summary</h4>
-            <div style="padding: 16px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(249, 115, 22, 0.1)); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
+            <div id="api-key-prompt" style="padding: 16px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(249, 115, 22, 0.1)); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
               <p style="margin: 0 0 12px 0; font-weight: 600; color: #dc2626;">🔑 API Key Required</p>
               <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 1.6; color: #374151;">
                 To use AI-powered summaries and text simplification, you need a Google Gemini API key.
@@ -284,10 +297,21 @@
               <ol style="margin: 0 0 12px 0; padding-left: 20px; font-size: 13px; color: #4b5563;">
                 <li>Visit <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: #6366f1; text-decoration: underline;">Google AI Studio</a></li>
                 <li>Create a free API key</li>
-                <li>Add it in Settings</li>
+                <li>Paste it below</li>
               </ol>
+              <div id="api-key-input-container" style="display: none; margin-bottom: 12px;">
+                <input type="text" id="api-key-input" placeholder="Paste your API key here..." style="width: 100%; padding: 10px; border: 2px solid #6366f1; border-radius: 8px; font-size: 13px; margin-bottom: 8px; box-sizing: border-box;">
+                <div style="display: flex; gap: 8px;">
+                  <button class="cog-btn-save-key" style="flex: 1; padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
+                    Save Key
+                  </button>
+                  <button class="cog-btn-cancel-key" style="padding: 10px 16px; background: rgba(107, 114, 128, 0.1); color: #374151; border: 1px solid rgba(107, 114, 128, 0.3); border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
+                    Cancel
+                  </button>
+                </div>
+              </div>
               <button class="cog-btn-open-settings" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
-                Open Settings
+                Enter API Key
               </button>
             </div>
           </div>
@@ -376,7 +400,57 @@
     // Open Settings button
     const settingsBtn = panel.querySelector('.cog-btn-open-settings');
     settingsBtn?.addEventListener('click', () => {
-      chrome.runtime.openOptionsPage();
+      const inputContainer = panel.querySelector('#api-key-input-container');
+      const settingsBtn = panel.querySelector('.cog-btn-open-settings');
+      if (inputContainer && settingsBtn) {
+        inputContainer.style.display = 'block';
+        settingsBtn.style.display = 'none';
+        const input = panel.querySelector('#api-key-input');
+        input?.focus();
+      }
+    });
+
+    // Save API key
+    const saveKeyBtn = panel.querySelector('.cog-btn-save-key');
+    saveKeyBtn?.addEventListener('click', async () => {
+      const input = panel.querySelector('#api-key-input');
+      const apiKey = input?.value.trim();
+      
+      if (!apiKey) {
+        showNotification('⚠️ Please enter an API key');
+        return;
+      }
+
+      // Update local state first
+      state.settings.apiKey = apiKey;
+      
+      // Save to Chrome storage
+      chrome.runtime.sendMessage({
+        type: 'SET_SETTINGS',
+        settings: state.settings
+      }, (response) => {
+        if (response?.success) {
+          console.log('✅ API key saved successfully:', apiKey.slice(0, 10) + '...');
+          showNotification('✅ API key saved! Refreshing page...');
+          setTimeout(() => window.location.reload(), 1500);
+        } else {
+          console.error('❌ Failed to save API key');
+          showNotification('⚠️ Failed to save API key');
+        }
+      });
+    });
+
+    // Cancel API key input
+    const cancelKeyBtn = panel.querySelector('.cog-btn-cancel-key');
+    cancelKeyBtn?.addEventListener('click', () => {
+      const inputContainer = panel.querySelector('#api-key-input-container');
+      const settingsBtn = panel.querySelector('.cog-btn-open-settings');
+      const input = panel.querySelector('#api-key-input');
+      if (inputContainer && settingsBtn && input) {
+        input.value = '';
+        inputContainer.style.display = 'none';
+        settingsBtn.style.display = 'block';
+      }
     });
 
     // Control buttons
@@ -501,8 +575,16 @@
 
     // Limit to first 15 paragraphs to avoid performance issues
     const toSimplify = complexParagraphs.slice(0, 15);
+    let successCount = 0;
+    let quotaExceeded = false;
 
     for (const item of toSimplify) {
+      // Stop if quota exceeded
+      if (quotaExceeded) {
+        console.warn('⏹️ Stopping simplification - API quota exceeded');
+        break;
+      }
+
       try {
         // Get simplified version from AI
         const result = await window.CogAssist_NLP.simplifyText(item.text, state.settings.readingLevel || '8');
@@ -521,17 +603,34 @@
           
           // Add hover tooltip
           addHoverTooltip(item.element, result.simplified);
+          successCount++;
         }
       } catch (e) {
-        console.warn('Failed to simplify paragraph:', e);
-        // Continue with next paragraph
+        // Check for specific error types
+        const errorMsg = e.message || String(e);
+        
+        if (errorMsg.includes('Extension context invalidated')) {
+          console.error('⚠️ Extension was reloaded - stopping simplification');
+          showNotification('⚠️ Extension reloaded - please refresh the page');
+          break; // Stop processing
+        } else if (errorMsg.includes('429') || errorMsg.includes('quota') || errorMsg.includes('RESOURCE_EXHAUSTED')) {
+          console.error('⚠️ API quota exceeded - free tier limit is 20 requests/day');
+          showNotification('⚠️ API quota exceeded (20/day limit) - try again tomorrow');
+          quotaExceeded = true;
+          break; // Stop processing
+        } else {
+          console.warn('Failed to simplify paragraph:', e);
+          // Continue with next paragraph for other errors
+        }
       }
 
       // Throttle API calls
       await sleep(300);
     }
 
-    console.log(`✓ Simplified ${toSimplify.length} complex sections`);
+    if (successCount > 0) {
+      console.log(`✓ Simplified ${successCount} complex sections`);
+    }
   }
 
   /**
@@ -765,6 +864,12 @@
     return new Promise(resolve => {
       chrome.runtime.sendMessage({ type: 'GET_SETTINGS' }, response => {
         state.settings = response?.settings || {};
+        console.log('📋 Settings loaded:', {
+          hasApiKey: !!state.settings.apiKey,
+          apiKeyLength: state.settings.apiKey?.length || 0,
+          readingLevel: state.settings.readingLevel,
+          autoSimplify: state.settings.autoSimplify
+        });
         resolve();
       });
     });
