@@ -316,6 +316,9 @@
             <button class="cog-btn cog-btn-read" data-action="read">
               <span>🔊</span> Read Aloud
             </button>
+            <button class="cog-btn cog-btn-about" data-action="about">
+              <span>ℹ️</span> About
+            </button>
           </div>
         </div>
       </div>
@@ -350,6 +353,112 @@
 
     const readBtn = panel.querySelector('[data-action="read"]');
     readBtn?.addEventListener('click', () => toggleReading());
+
+    const aboutBtn = panel.querySelector('[data-action="about"]');
+    aboutBtn?.addEventListener('click', () => showAboutPage());
+  }
+
+  /**
+   * Show About page overlay
+   */
+  function showAboutPage() {
+    // Remove existing about page if present
+    const existing = document.getElementById('cog-assist-about');
+    if (existing) {
+      existing.remove();
+      return; // Toggle behavior
+    }
+
+    // Create about page overlay
+    const aboutPage = document.createElement('div');
+    aboutPage.id = 'cog-assist-about';
+    aboutPage.className = 'cog-about-overlay';
+    
+    aboutPage.innerHTML = `
+      <div class="cog-about-content">
+        <div class="cog-about-header">
+          <h2>Cognitive Accessibility Assistant</h2>
+          <button class="cog-about-close" aria-label="Close">&times;</button>
+        </div>
+        
+        <div class="cog-about-body">
+          <section class="about-section">
+            <h3>What This Does</h3>
+            <p>
+              A thoughtful accessibility layer that helps people with dyslexia, ADHD, 
+              cognitive processing differences, or language barriers read web content more easily.
+            </p>
+          </section>
+
+          <section class="about-section">
+            <h3>How It Works</h3>
+            <ul class="about-list">
+              <li><strong>Complexity Detection</strong> – Analyzes text for reading difficulty</li>
+              <li><strong>Smart Simplification</strong> – AI rewrites complex sections at your reading level</li>
+              <li><strong>Hover Tooltips</strong> – See simplified text without replacing the original</li>
+              <li><strong>Focus Mode</strong> – Reduces visual overwhelm with soft highlighting</li>
+              <li><strong>Text-to-Speech</strong> – Natural voice reading with live highlighting</li>
+            </ul>
+          </section>
+
+          <section class="about-section">
+            <h3>Design Philosophy</h3>
+            <p>
+              <strong>Non-intrusive</strong> – No popups or blocking overlays<br>
+              <strong>Contextual</strong> – Enhancements appear only when needed<br>
+              <strong>Reversible</strong> – Original content always preserved<br>
+              <strong>Private</strong> – No tracking or data collection
+            </p>
+          </section>
+
+          <section class="about-section">
+            <h3>Privacy & Security</h3>
+            <p>
+              This extension stores your API key locally and uses it only for text processing. 
+              No usage data, browsing history, or personal information is collected or transmitted.
+            </p>
+          </section>
+
+          <section class="about-section about-footer">
+            <p><strong>Powered by:</strong> Google Gemini 2.5 Flash API</p>
+            <p><strong>Version:</strong> 1.0.0 | <strong>License:</strong> MIT</p>
+            <p style="margin-top: 16px; font-size: 13px; color: #6b7280;">
+              Made with care for a more accessible web.
+            </p>
+          </section>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(aboutPage);
+
+    // Animate in
+    setTimeout(() => aboutPage.classList.add('cog-about-visible'), 50);
+
+    // Close button handler
+    const closeBtn = aboutPage.querySelector('.cog-about-close');
+    closeBtn?.addEventListener('click', () => {
+      aboutPage.classList.remove('cog-about-visible');
+      setTimeout(() => aboutPage.remove(), 300);
+    });
+
+    // Close on overlay click (not content)
+    aboutPage.addEventListener('click', (e) => {
+      if (e.target === aboutPage) {
+        aboutPage.classList.remove('cog-about-visible');
+        setTimeout(() => aboutPage.remove(), 300);
+      }
+    });
+
+    // ESC key to close
+    const escHandler = (e) => {
+      if (e.key === 'Escape') {
+        aboutPage.classList.remove('cog-about-visible');
+        setTimeout(() => aboutPage.remove(), 300);
+        document.removeEventListener('keydown', escHandler);
+      }
+    };
+    document.addEventListener('keydown', escHandler);
   }
 
   /**
