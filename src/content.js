@@ -286,7 +286,7 @@
                 <li>Create a free API key</li>
                 <li>Add it in Settings</li>
               </ol>
-              <button onclick="chrome.runtime.openOptionsPage()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
+              <button class="cog-btn-open-settings" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
                 Open Settings
               </button>
             </div>
@@ -371,6 +371,12 @@
       panel.classList.toggle('cog-panel-collapsed');
       const icon = toggleBtn.querySelector('.toggle-icon');
       if (icon) icon.textContent = state.panelVisible ? '◀' : '▶';
+    });
+
+    // Open Settings button
+    const settingsBtn = panel.querySelector('.cog-btn-open-settings');
+    settingsBtn?.addEventListener('click', () => {
+      chrome.runtime.openOptionsPage();
     });
 
     // Control buttons
