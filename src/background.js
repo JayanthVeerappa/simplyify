@@ -11,7 +11,7 @@ const DEFAULT_SETTINGS = {
   autoFocusMode: false,       // Auto-enable focus mode
   autoTTS: false,             // Auto-start text-to-speech
   autoDetectComplexity: true, // Auto-detect complexity and tone
-  apiKey: 'AIzaSyDFZnJa6vilujizpEAWJSUyqK8fAb3eWes',
+  apiKey: 'n/a',
   apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
 };
 
