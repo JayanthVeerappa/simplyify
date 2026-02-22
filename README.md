@@ -258,4 +258,6 @@ Built with accessibility-first design principles inspired by:
 
 ---
 
-**Made with care for a more accessible web.**
+**TO RUN**
+1) Download file, then go to extensions and load as upacked. You will need to Provide an API Key
+
