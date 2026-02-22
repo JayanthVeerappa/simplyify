@@ -121,20 +121,24 @@ CRITICAL RULES:
 3. Use active voice ("The cat ate" not "was eaten by")
 4. Remove jargon, technical terms, and complex phrases
 5. Explain any necessary terms in simple language
-6. Use numbered steps for processes
-7. Add specific examples when helpful
-8. Make it conversational and friendly
+6. Make it conversational and friendly
 
 For the summary:
-- Extract 5-7 key points that answer "What do I need to know?"
-- Each point should be ONE clear action or fact
-- Use simple, direct language
+- Extract ONLY 3-4 key points (keep it short!)
+- Each point must be ONE simple sentence (max 10 words)
+- Answer: "What's the main idea?"
+- Use simple, everyday words
+
+For action steps:
+- List ONLY 2-3 concrete actions (keep it minimal!)
+- Each action must be super short (5-8 words max)
+- Make them clear and specific
 
 Return VALID JSON only (no markdown, no code blocks):
 {
-  "simplified": "Your complete simplified version with proper paragraphs. Use \\n\\n for paragraph breaks.",
-  "keySentences": ["First key point", "Second key point", "Third key point"],
-  "bullets": ["Action step 1", "Action step 2", "Action step 3"]
+  "simplified": "Your simplified version. Keep paragraphs short. Use \\n\\n for paragraph breaks.",
+  "keySentences": ["Short key point 1", "Short key point 2", "Short key point 3"],
+  "bullets": ["Brief action 1", "Brief action 2"]
 }
 
 Text to simplify:
