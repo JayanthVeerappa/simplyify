@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cognitive Assistant</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <header class="popup-header">
+      <h1>🧠 Cognitive Assistant</h1>
+      <p class="subtitle">Make the web easier to understand</p>
+    </header>
+
+    <main class="popup-main">
+      <!-- Quick Actions -->
+      <section class="action-grid">
+        <button id="simplify-btn" class="action-btn primary" title="Simplify page content">
+          <span class="icon">📖</span>
+          <span class="label">Simplify Text</span>
+        </button>
+
+        <button id="focus-btn" class="action-btn" title="Enable focus mode">
+          <span class="icon">🎯</span>
+          <span class="label">Focus Mode</span>
+        </button>
+
+        <button id="read-btn" class="action-btn" title="Read aloud">
+          <span class="icon">🔊</span>
+          <span class="label">Read Aloud</span>
+        </button>
+
+        <button id="form-btn" class="action-btn" title="Form guidance">
+          <span class="icon">📝</span>
+          <span class="label">Form Mode</span>
+        </button>
+      </section>
+
+      <!-- Controls -->
+      <section class="controls">
+        <div class="control-group">
+          <label for="reading-level">
+            Reading Level
+            <select id="reading-level">
+              <option value="5">5th Grade</option>
+              <option value="8" selected>8th Grade</option>
+              <option value="12">12th Grade</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="control-group">
+          <label for="tts-speed">
+            Speech Speed
+            <input type="range" id="tts-speed" min="0.5" max="2.0" step="0.1" value="1.0">
+            <span id="speed-value">1.0x</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Status -->
+      <div id="status" class="status hidden"></div>
+    </main>
+
+    <footer class="popup-footer">
+      <button id="settings-btn" class="link-btn">⚙️ Settings</button>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

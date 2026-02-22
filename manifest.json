@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Cognitive Accessibility Assistant",
+  "version": "1.0.0",
+  "description": "AI-powered accessibility tool for users with dyslexia, ADHD, autism, and cognitive processing difficulties. Simplifies pages, provides focus mode, TTS, form guidance, and tone detection.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options/options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "src/utils/domHelpers.js",
+        "src/utils/nlpClient.js",
+        "src/utils/ttsEngine.js",
+        "src/content.js"
+      ],
+      "css": ["src/styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

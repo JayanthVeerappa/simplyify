@@ -1,0 +1,538 @@
+/* 
+ * Cognitive Accessibility Assistant - Glassmorphism UI Styles
+ * Modern, minimal, elegant design with soft blur effects
+ */
+
+/* ======================
+   RIGHT-SIDE PANEL
+   ====================== */
+
+.cog-assist-panel {
+  position: fixed;
+  right: -360px;
+  top: 80px;
+  width: 320px;
+  max-height: calc(100vh - 100px);
+  z-index: 999999;
+  
+  /* Glassmorphism effect */
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  
+  /* Rounded corners and shadow */
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  
+  /* Smooth transition */
+  transition: right 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  
+  /* Typography */
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+.cog-assist-panel.cog-panel-visible {
+  right: 24px;
+}
+
+.cog-assist-panel.cog-panel-collapsed {
+  width: 48px;
+}
+
+.cog-assist-panel.cog-panel-collapsed .cog-panel-content {
+  display: none;
+}
+
+.cog-assist-panel.cog-panel-collapsed .cog-panel-header h3 {
+  display: none;
+}
+
+/* Panel Header */
+.cog-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.cog-panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+.cog-panel-toggle {
+  background: rgba(99, 102, 241, 0.1);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #6366f1;
+  font-size: 12px;
+}
+
+.cog-panel-toggle:hover {
+  background: rgba(99, 102, 241, 0.2);
+  transform: scale(1.05);
+}
+
+/* Panel Content */
+.cog-panel-content {
+  padding: 16px;
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+.cog-panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cog-panel-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cog-panel-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+
+.cog-panel-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* ======================
+   TONE BADGE
+   ====================== */
+
+.cog-tone-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #1e40af;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.cog-tone-badge.cog-tone-urgent {
+  background: rgba(239, 68, 68, 0.1);
+  color: #991b1b;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.cog-tone-badge.cog-tone-friendly {
+  background: rgba(34, 197, 94, 0.1);
+  color: #166534;
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.cog-tone-badge.cog-tone-strict {
+  background: rgba(251, 146, 60, 0.1);
+  color: #9a3412;
+  border-color: rgba(251, 146, 60, 0.2);
+}
+
+.cog-tone-badge .tone-icon {
+  font-size: 14px;
+}
+
+.cog-tone-badge .tone-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ======================
+   SECTIONS
+   ====================== */
+
+.cog-section {
+  margin-bottom: 20px;
+}
+
+.cog-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Summary Lists */
+.cog-summary-list,
+.cog-action-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cog-summary-list li,
+.cog-action-list li {
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 13px;
+  line-height: 1.5;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.cog-summary-list li:hover,
+.cog-action-list li:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(99, 102, 241, 0.2);
+  transform: translateX(-2px);
+}
+
+.cog-summary-list li::before {
+  content: "•";
+  color: #6366f1;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-right: 8px;
+}
+
+.cog-action-list li::before {
+  content: "→";
+  color: #10b981;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-right: 8px;
+}
+
+/* Stats */
+.cog-stats {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.stat-item:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stat-label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.stat-value {
+  color: #111827;
+  font-weight: 600;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+/* ======================
+   CONTROL BUTTONS
+   ====================== */
+
+.cog-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cog-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.cog-btn-focus {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+  color: #4f46e5;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.cog-btn-focus:hover {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(139, 92, 246, 0.25));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.cog-btn-read {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15));
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.cog-btn-read:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.25));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.cog-btn span {
+  font-size: 16px;
+}
+
+/* ======================
+   FOCUS MODE
+   ====================== */
+
+.cog-focus-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  z-index: 99998;
+  pointer-events: none;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.cog-focused {
+  position: relative !important;
+  z-index: 99999 !important;
+  background: white !important;
+  padding: 24px !important;
+  border-radius: 12px !important;
+  box-shadow: 
+    0 0 0 4px rgba(99, 102, 241, 0.4),
+    0 20px 60px rgba(0, 0, 0, 0.3) !important;
+  animation: focusPulse 0.4s ease-out;
+}
+
+@keyframes focusPulse {
+  0% {
+    transform: scale(0.98);
+    box-shadow: 
+      0 0 0 0 rgba(99, 102, 241, 0.7),
+      0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 
+      0 0 0 4px rgba(99, 102, 241, 0.4),
+      0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ======================
+   TOAST NOTIFICATIONS
+   ====================== */
+
+.cog-toast {
+  position: fixed;
+  bottom: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(12px);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 1000000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: bottom 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.cog-toast.cog-toast-visible {
+  bottom: 32px;
+}
+
+/* ======================
+   ANIMATIONS
+   ====================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ======================
+   SIMPLIFIED CONTENT MARKERS
+   ====================== */
+
+[data-simplified="true"] {
+  background: rgba(239, 246, 255, 0.5) !important;
+  border-left: 3px solid #6366f1 !important;
+  padding-left: 12px !important;
+  transition: all 0.3s ease !important;
+  cursor: help !important;
+}
+
+[data-simplified="true"]:hover {
+  background: rgba(239, 246, 255, 0.8) !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Tooltip for simplified paragraphs */
+.cog-assist-tooltip {
+  position: absolute;
+  max-width: 400px;
+  z-index: 1000000;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.cog-assist-tooltip.cog-tooltip-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cog-assist-tooltip .tooltip-header {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 10px 10px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.cog-assist-tooltip .tooltip-content {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  color: #1f2937;
+  padding: 16px;
+  border-radius: 0 0 10px 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-top: none;
+}
+
+/* ======================
+   DARK MODE SUPPORT
+   ====================== */
+
+@media (prefers-color-scheme: dark) {
+  .cog-assist-panel {
+    background: rgba(31, 41, 55, 0.85);
+    border-color: rgba(75, 85, 99, 0.3);
+    color: #e5e7eb;
+  }
+  
+  .cog-panel-header {
+    border-bottom-color: rgba(75, 85, 99, 0.3);
+  }
+  
+  .cog-panel-header h3 {
+    color: #f9fafb;
+  }
+  
+  .cog-summary-list li,
+  .cog-action-list li {
+    background: rgba(55, 65, 81, 0.6);
+    border-color: rgba(75, 85, 99, 0.3);
+    color: #e5e7eb;
+  }
+  
+  .cog-summary-list li:hover,
+  .cog-action-list li:hover {
+    background: rgba(55, 65, 81, 0.8);
+  }
+  
+  .cog-stats {
+    background: rgba(55, 65, 81, 0.5);
+    border-color: rgba(75, 85, 99, 0.3);
+  }
+  
+  .stat-label {
+    color: #9ca3af;
+  }
+  
+  .stat-value {
+    color: #f9fafb;
+  }
+  
+  .cog-focused {
+    background: #1f2937 !important;
+    color: #f9fafb !important;
+  }
+  
+  [data-simplified="true"] {
+    background: rgba(30, 41, 59, 0.5) !important;
+  }
+}
+
+/* ======================
+   RESPONSIVE ADJUSTMENTS
+   ====================== */
+
+@media (max-width: 768px) {
+  .cog-assist-panel {
+    right: -340px;
+    width: 300px;
+    top: 60px;
+  }
+  
+  .cog-assist-panel.cog-panel-visible {
+    right: 12px;
+  }
+}

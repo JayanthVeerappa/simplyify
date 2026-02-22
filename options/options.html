@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cognitive Assistant - Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🧠 Cognitive Assistant Settings</h1>
+      <p class="subtitle">Configure your accessibility preferences</p>
+    </header>
+
+    <main>
+      <!-- Reading Preferences -->
+      <section class="settings-section">
+        <h2>📖 Reading Preferences</h2>
+        
+        <div class="setting-item">
+          <label for="reading-level">
+            <strong>Reading Level</strong>
+            <span class="description">Choose how simplified text should be</span>
+          </label>
+          <select id="reading-level">
+            <option value="5">5th Grade (Very Simple)</option>
+            <option value="8">8th Grade (Moderate)</option>
+            <option value="12">12th Grade (Standard)</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="show-floating">
+            <strong>Show Floating Button</strong>
+            <span class="description">Display a quick-access button on all pages</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Text-to-Speech -->
+      <section class="settings-section">
+        <h2>🔊 Text-to-Speech</h2>
+        
+        <div class="setting-item">
+          <label for="tts-rate">
+            <strong>Speech Speed</strong>
+            <span class="description">Adjust how fast text is read aloud</span>
+          </label>
+          <div class="range-control">
+            <input type="range" id="tts-rate" min="0.5" max="2.0" step="0.1" value="1.0">
+            <span id="rate-value">1.0x</span>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label for="tts-voice">
+            <strong>Voice</strong>
+            <span class="description">Select preferred text-to-speech voice</span>
+          </label>
+          <select id="tts-voice">
+            <option value="">Default</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- AI Integration -->
+      <section class="settings-section">
+        <h2>🤖 AI Integration</h2>
+        
+        <div class="setting-item">
+          <label for="api-key">
+            <strong>API Key</strong>
+            <span class="description">Your Google Gemini API key for advanced features</span>
+          </label>
+          <input type="password" id="api-key" placeholder="AIza...">
+          <div class="help-text">
+            <p>📌 <strong>How to get an API key:</strong></p>
+            <ol>
+              <li>Visit <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a></li>
+              <li>Click "Create API Key"</li>
+              <li>Copy and paste the key above</li>
+            </ol>
+            <p class="warning">⚠️ Your API key is stored locally and only used for text simplification and tone detection.</p>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <label for="api-endpoint">
+            <strong>API Endpoint (Advanced)</strong>
+            <span class="description">Custom API endpoint (leave default for Google Gemini)</span>
+          </label>
+          <input type="text" id="api-endpoint" placeholder="https://generativelanguage.googleapis.com/...">
+        </div>
+      </section>
+      
+      <!-- Automatic Features -->
+      <section class="settings-section">
+        <h2>⚡ Automatic Features</h2>
+        <p class="section-description">Choose which features run automatically when pages load</p>
+        
+        <div class="setting-item">
+          <label class="checkbox-label">
+            <input type="checkbox" id="auto-simplify" checked>
+            <strong>Auto-Simplify Pages</strong>
+            <span class="description">Automatically simplify text when pages load</span>
+          </label>
+        </div>
+        
+        <div class="setting-item">
+          <label class="checkbox-label">
+            <input type="checkbox" id="auto-detect">
+            <strong>Auto-Detect Complexity</strong>
+            <span class="description">Analyze reading level and tone automatically</span>
+          </label>
+        </div>
+        
+        <div class="setting-item">
+          <label class="checkbox-label">
+            <input type="checkbox" id="auto-focus">
+            <strong>Auto-Focus Mode</strong>
+            <span class="description">Enable focus mode automatically on complex pages</span>
+          </label>
+        </div>
+        
+        <div class="setting-item">
+          <label class="checkbox-label">
+            <input type="checkbox" id="auto-tts">
+            <strong>Auto-Read Aloud</strong>
+            <span class="description">Start reading content automatically (use with caution)</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Save Button -->
+      <div class="actions">
+        <button id="save-btn" class="btn-primary">💾 Save Settings</button>
+        <button id="reset-btn" class="btn-secondary">🔄 Reset to Defaults</button>
+      </div>
+
+      <div id="status" class="status hidden"></div>
+    </main>
+
+    <footer>
+      <p>Made with ❤️ for accessibility • <a href="https://github.com" target="_blank">View on GitHub</a></p>
+    </footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
