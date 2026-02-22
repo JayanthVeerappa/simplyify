@@ -106,14 +106,22 @@
 
       // 3. Get AI summary
       let summary = null;
+      let apiKeyMissing = false;
+      
       if (state.settings.autoSimplify !== false && analysis.totalWords > 200 && window.CogAssist_NLP) {
-        try {
-          console.log('📝 Requesting AI summary for', analysis.totalWords, 'words...');
-          summary = await window.CogAssist_NLP.simplifyText(analysis.fullText, state.settings.readingLevel || '8');
-          console.log('✅ Summary received:', summary);
-        } catch (e) {
-          console.error('❌ AI summary failed:', e);
-          showNotification('⚠️ Could not generate summary - using fallback');
+        // Check if API key is configured
+        if (!state.settings.apiKey || state.settings.apiKey.trim() === '') {
+          console.warn('⚠️ No API key configured');
+          apiKeyMissing = true;
+        } else {
+          try {
+            console.log('📝 Requesting AI summary for', analysis.totalWords, 'words...');
+            summary = await window.CogAssist_NLP.simplifyText(analysis.fullText, state.settings.readingLevel || '8');
+            console.log('✅ Summary received:', summary);
+          } catch (e) {
+            console.error('❌ AI summary failed:', e);
+            showNotification('⚠️ Could not generate summary - check API key');
+          }
         }
       } else {
         console.log('⏭️ Skipping AI summary:', { 
@@ -124,7 +132,7 @@
       }
 
       // 4. Create elegant sidebar panel
-      createSidebarPanel(summary, toneResult, analysis);
+      createSidebarPanel(summary, toneResult, analysis, apiKeyMissing);
 
       // 5. Selectively simplify complex paragraphs (in-place)
       if (state.settings.autoSimplify !== false && analysis.complexParagraphs.length > 0) {
@@ -236,7 +244,7 @@
   /**
    * Create elegant right-side summary panel
    */
-  function createSidebarPanel(summary, tone, analysis) {
+  function createSidebarPanel(summary, tone, analysis, apiKeyMissing = false) {
     // Remove existing panel
     const existing = document.getElementById('cog-assist-sidebar');
     if (existing) existing.remove();
@@ -265,7 +273,25 @@
         ` : ''}
 
         <!-- Page Summary -->
-        ${summary && summary.keySentences && summary.keySentences.length > 0 ? `
+        ${apiKeyMissing ? `
+          <div class="cog-section">
+            <h4>📝 Summary</h4>
+            <div style="padding: 16px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(249, 115, 22, 0.1)); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
+              <p style="margin: 0 0 12px 0; font-weight: 600; color: #dc2626;">🔑 API Key Required</p>
+              <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 1.6; color: #374151;">
+                To use AI-powered summaries and text simplification, you need a Google Gemini API key.
+              </p>
+              <ol style="margin: 0 0 12px 0; padding-left: 20px; font-size: 13px; color: #4b5563;">
+                <li>Visit <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: #6366f1; text-decoration: underline;">Google AI Studio</a></li>
+                <li>Create a free API key</li>
+                <li>Add it in Settings</li>
+              </ol>
+              <button onclick="chrome.runtime.openOptionsPage()" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
+                Open Settings
+              </button>
+            </div>
+          </div>
+        ` : summary && summary.keySentences && summary.keySentences.length > 0 ? `
           <div class="cog-section">
             <h4>📝 Summary</h4>
             <ul class="cog-summary-list">
@@ -544,8 +570,13 @@
     element.addEventListener('mouseleave', () => {
       if (tooltip) {
         tooltip.classList.remove('cog-tooltip-visible');
-        setTimeout(() => tooltip.remove(), 200);
+        const tooltipToRemove = tooltip;
         tooltip = null;
+        setTimeout(() => {
+          if (tooltipToRemove && tooltipToRemove.parentNode) {
+            tooltipToRemove.remove();
+          }
+        }, 200);
       }
     });
   }
