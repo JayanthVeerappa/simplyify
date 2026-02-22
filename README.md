@@ -1,98 +1,261 @@
 # Cognitive Accessibility Assistant
 
-A comprehensive Chrome extension designed to support users with dyslexia, ADHD, autism, and cognitive processing difficulties.
+**A thoughtful, non-intrusive accessibility layer for the modern web.**
 
-## ✨ Features
+---
 
-### 🎯 **Automatic Mode** (NEW!)
-The extension now runs automatically on every webpage:
-- ✅ **Auto-detect complexity & tone** - Analyzes reading level and emotional tone  
-- ✅ **Auto-simplify text** - Converts complex content to simple language (default: ON)
-- ⚡ **Auto-focus mode** - Progressive reveal (default: OFF, enable in Settings)
-- 🔊 **Auto-read aloud** - TTS on page load (default: OFF, enable in Settings)
+## The Problem
 
-**No button clicks required!** Configure in Settings which features run automatically.
+Millions of people with dyslexia, ADHD, cognitive processing differences, or language barriers struggle with dense online content. Traditional reading aids are either too aggressive (breaking page layouts), too manual (requiring constant clicking), or too simplistic (just changing fonts).
 
-### 📚 Core Features
-✨ **Page Simplification** - AI-powered text simplification using Google Gemini  
-🎯 **Focus Mode** - Progressive reveal system that highlights one section at a time  
-🔊 **Text-to-Speech** - Read aloud with word highlighting and adjustable speed  
-📝 **Form Guidance** - Step-by-step form assistance with inline explanations  
-😊 **Tone Detection** - Detects urgent, strict, friendly, sarcastic, or neutral tone  
-⌨️ **Keyboard Shortcuts** - Quick access to all features without touching the mouse
+**Cognitive accessibility shouldn't require disrupting the reading experience.**
+
+---
+
+## What It Does
+
+Cognitive Accessibility Assistant analyzes web pages in real-time and provides intelligent support without blocking or replacing content:
+
+### Core Features
+
+**Automatic Complexity Detection**  
+Analyzes paragraphs for sentence length, vocabulary complexity, and reading level. Only enhances content that genuinely needs simplification.
+
+**Smart Text Simplification**  
+Uses AI to rewrite complex sections at an adjustable reading level (1st-12th grade). Simplified versions appear on hover—preserving the original text for those who want it.
+
+**Elegant Summary Panel**  
+A 320px right-side panel with glassmorphism styling provides:
+- AI-generated page summary (5-7 key points)
+- Tone detection (urgent, friendly, formal, etc.)
+- Complexity statistics
+- Quick action controls
+
+**Focus Mode**  
+Soft background dimming with purple ring highlighting to reduce visual overwhelm. Progressive focus that adapts to your reading position.
+
+**Text-to-Speech Integration**  
+Natural voice reading with live sentence highlighting. Adjustable speed and voice selection.
+
+**Privacy-First Architecture**  
+All processing happens client-side or through secure background workers. No tracking, no analytics, no external servers beyond the AI API.
+
+---
+
+## Design Philosophy
+
+This extension follows a **calm technology** approach:
+
+- **Non-intrusive** – No massive popups or modal overlays
+- **Contextual** – Enhancements appear only when needed
+- **Reversible** – Original content is always preserved
+- **Minimal** – Clean glassmorphism aesthetic with soft shadows and blur effects
+- **Accessible** – Built with WCAG principles in mind
+
+The interface uses a modern glassmorphism design language: translucent panels, backdrop filters, smooth animations, and neutral color palettes that adapt to light/dark mode.
+
+---
+
+## How It Works
+
+### Architecture Overview
+
+```
+┌─────────────────────────────────────────────────┐
+│  Content Script (content.js)                    │
+│  • DOM analysis & complexity detection          │
+│  • Sidebar panel injection                      │
+│  • Focus mode & TTS coordination                │
+└─────────────────────────────────────────────────┘
+                      ▼
+┌─────────────────────────────────────────────────┐
+│  Utility Layer                                  │
+│  • domHelpers.js - Content extraction           │
+│  • nlpClient.js - API routing                   │
+│  • ttsEngine.js - Speech synthesis              │
+└─────────────────────────────────────────────────┘
+                      ▼
+┌─────────────────────────────────────────────────┐
+│  Background Service Worker (background.js)      │
+│  • Secure API key management                    │
+│  • Settings persistence (Chrome Storage)        │
+│  • Message routing between contexts             │
+└─────────────────────────────────────────────────┘
+                      ▼
+┌─────────────────────────────────────────────────┐
+│  Google Gemini 2.5 Flash API                    │
+│  • Text simplification                          │
+│  • Tone detection                               │
+│  • Summary generation                           │
+└─────────────────────────────────────────────────┘
+```
+
+### Complexity Detection Algorithm
+
+Text blocks are analyzed using:
+- **Flesch-Kincaid Grade Level** – Reading difficulty estimation
+- **Average Sentence Length** – Flags sentences >20 words
+- **Complex Word Ratio** – Identifies 3+ syllable words
+- **Threshold Logic** – Only marks truly complex paragraphs
+
+### AI Processing Pipeline
+
+1. Page loads → Content script waits 1.5s for full render
+2. Extract main content using semantic selectors
+3. Analyze paragraphs for complexity metrics
+4. Send full-page text to Gemini API for summary
+5. Selectively simplify complex paragraphs (max 15 to prevent API overload)
+6. Display results in sidebar panel
+7. Add hover tooltips to simplified paragraphs
+
+---
+
+## Performance & Safety
+
+**API Rate Limiting**  
+- Maximum 15 paragraph simplifications per page
+- 300ms throttle between API calls
+- Automatic fallback if API fails
+
+**Graceful Degradation**  
+- Extension works without AI API (shows basic stats)
+- Fallback summaries use heuristic extraction
+- No page freezing or layout breaks
+
+**Error Handling**  
+- Extension context validation before API calls
+- Automatic retry with exponential backoff
+- User-friendly error notifications
+
+**Resource Efficiency**  
+- Lazy-loaded components
+- Debounced scroll handlers
+- Minimal DOM manipulation
+
+---
+
+## Privacy Statement
+
+**Zero Tracking. Zero Analytics. Zero Data Collection.**
+
+- API key stored locally in Chrome's secure storage
+- No user behavior logging
+- No external servers (except Gemini API for text processing)
+- Text sent to Gemini API is not stored by this extension
+- All settings remain on-device
+
+**Note:** Google Gemini API has its own data policies. Review them at: https://ai.google.dev/gemini-api/terms
+
+---
+
+## Configuration Options
+
+Access settings through the extension popup or right-click the extension icon:
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Reading Level** | Target simplification grade (1-12) | 8th grade |
+| **Auto-Simplify** | Automatically enhance pages on load | Enabled |
+| **Auto-Focus Mode** | Enable focus highlighting on load | Disabled |
+| **Auto-TTS** | Start text-to-speech automatically | Disabled |
+| **TTS Rate** | Speech speed (0.5x - 2.0x) | 1.0x |
+| **TTS Voice** | Preferred voice (system-dependent) | System default |
+| **Panel Visibility** | Show/hide sidebar panel | Visible |
+
+---
 
 ## Keyboard Shortcuts
 
-- **Ctrl+Shift+S** - Simplify current page
-- **Ctrl+Shift+F** - Toggle Focus Mode
-- **Ctrl+Shift+R** - Read Aloud
-- **Ctrl+Shift+X** - Stop all features  
+- `Ctrl+Shift+F` – Toggle Focus Mode
+- `Ctrl+Shift+R` – Start/Stop Reading
+- `Ctrl+Shift+H` – Toggle Panel Visibility
 
-## Installation
+*(Shortcuts can be customized in `chrome://extensions/shortcuts`)*
 
-1. Open Chrome and navigate to `chrome://extensions/`
-2. Enable "Developer mode" (toggle in top-right)
-3. Click "Load unpacked"
-4. Select this directory: `/Users/Jayanth/Desktop/simplyify`
-5. Reload the extension if you already had it loaded
+---
 
-## Configuration
+## Roadmap
 
-1. Click the extension icon in your browser toolbar
-2. Click "Settings" at the bottom of the popup
-3. Configure your preferences:
-   - Reading level (5th, 8th, or 12th grade)
-   - Text-to-Speech speed
-   - API key for NLP features (optional but recommended)
+### Planned Features
+- **Multi-language support** – Simplify non-English content
+- **Custom dictionaries** – Add domain-specific terms
+- **Reading history** – Track comprehension metrics
+- **Annotation layer** – Highlight and save key passages
+- **Collaborative modes** – Share simplified versions
+- **Browser sync** – Settings across devices
 
-## Usage
+### Technical Improvements
+- Offline mode with cached simplifications
+- WebAssembly complexity analysis (faster processing)
+- Progressive Web App companion for mobile
+- Custom AI model fine-tuned for accessibility
 
-### Quick Actions (from popup)
-- **Simplify Text** - Converts current page to simplified, easy-to-read format
-- **Focus Mode** - Enables progressive reveal for focused reading
-- **Read Aloud** - Activates text-to-speech with word highlighting
-- **Form Mode** - Breaks complex forms into manageable steps
+### Accessibility Enhancements
+- Screen reader optimizations
+- High contrast mode
+- Reduced motion alternatives
+- Customizable color schemes
 
-### Keyboard Shortcuts
-- Press the floating assistant button (bottom-right) for quick access to focus mode
+---
 
-## API Integration
+## Technical Stack
 
-For advanced features (text simplification and tone detection), you can integrate with AI services:
+**Extension Framework**  
+Chrome Manifest V3 (modern extension architecture)
 
-1. Get an API key from your preferred provider (OpenAI, Anthropic, Google AI, etc.)
-2. Add it in Settings → API Key field
-3. The extension will use it for intelligent text processing
+**Frontend**  
+- Vanilla JavaScript (no framework dependencies)
+- CSS3 with backdrop-filter for glassmorphism
+- Web Speech API for TTS
 
-**Security Note**: API calls are routed through the background service worker to keep your key secure.
+**AI/NLP**  
+Google Gemini 2.5 Flash via REST API
 
-## File Structure
+**Storage**  
+Chrome Storage API (sync across signed-in devices)
 
-```
-simplyify/
-├── manifest.json          # Extension configuration
-├── src/
-│   ├── background.js      # Service worker (settings, API proxy)
-│   ├── content.js         # Main content script
-│   ├── styles.css         # Injected styles
-│   └── utils/
-│       ├── domHelpers.js  # DOM manipulation utilities
-│       ├── nlpClient.js   # NLP API client
-│       └── ttsEngine.js   # Text-to-speech engine
-├── popup/
-│   ├── popup.html         # Extension popup UI
-│   ├── popup.css          # Popup styles
-│   └── popup.js           # Popup logic
-└── options/
-    ├── options.html       # Settings page
-    ├── options.css        # Settings styles
-    └── options.js         # Settings logic
-```
+**Build Tools**  
+None required – pure client-side execution
 
-## Development
+---
 
-This extension uses vanilla JavaScript (no build step required) for maximum compatibility and ease of modification.
+## Vision
+
+**Cognitive accessibility should be a default, not an afterthought.**
+
+The web is humanity's shared knowledge base, but dense academic language, complex terminology, and walls of text create unnecessary barriers. This extension is a step toward a more inclusive internet—one where information adapts to the reader, not the other way around.
+
+**Our goal:** Make every webpage as readable as it needs to be, for everyone, without compromise.
+
+---
+
+## Contributing
+
+This project welcomes contributions focused on:
+- Performance optimization
+- New accessibility features
+- UI/UX refinements
+- Bug fixes and error handling
+- Documentation improvements
+
+Please open an issue before starting major work.
+
+---
 
 ## License
 
-MIT License - Feel free to modify and distribute
+MIT License – See [LICENSE](LICENSE) for details.
+
+---
+
+## Acknowledgments
+
+Built with accessibility-first design principles inspired by:
+- Web Content Accessibility Guidelines (WCAG 2.1)
+- Calm technology philosophy (Mark Weiser)
+- Dyslexia-friendly design research
+- ADHD cognitive load reduction studies
+
+---
+
+**Made with care for a more accessible web.**
